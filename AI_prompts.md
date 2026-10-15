@@ -109,3 +109,7 @@ about the agents performance. what are ssome problems campus customes might face
 **User:** push the code to uh, public GitHub repository. And also put it into output slash GitHub dot underscore URL dot TXT. Um, remember, don't push the real.env to the GitHub repo.
 
 **Assistant:** Prepared `HW 5` as its own git repo with a `.gitignore` (excludes `.env`, `.venv`, `node_modules`, and the data `.db` files), `.env.example`, and a README; scanned the 66 staged files and confirmed the real Portkey key and `.env` are not in them; committed locally. The GitHub CLI isn't installed, so asked the user to create the empty public repo before pushing over SSH.
+
+**User:** I created the empty public repo github.com/Kargosh202/campus-customs-agents. Push it and save the URL.
+
+**Assistant:** Saved `output/github_url.txt` and committed it, but the push failed: GitHub reports `Kargosh202/campus-customs-agents` not found (SSH, web page 404, and it isn't in the account's public repos). Nothing was pushed; asked the user to check the repo name.
