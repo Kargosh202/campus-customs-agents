@@ -121,3 +121,7 @@ about the agents performance. what are ssome problems campus customes might face
 **User:** I recreated the public repo as Kargosh202/campus-customs-agents while signed in as Kargosh202. Push it.
 
 **Assistant:** Pushed `main` to https://github.com/Kargosh202/campus-customs-agents (public, 67 files) and confirmed through the GitHub API that no `.env`, database, `.venv`, or `node_modules` files are in it; the URL is in `output/github_url.txt`.
+
+**User:** canu uoutput the public address here
+
+**Assistant:** Gave the public repo URL: https://github.com/Kargosh202/campus-customs-agents
