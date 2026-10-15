@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Campus Customs Operations Desk: resolved tickets</title>
+<style>
+  :root {
+    --serif: 'Times New Roman', Times, 'Liberation Serif', serif;
+    --purple-950: #170b2a; --purple-900: #1f1035; --purple-800: #2b1650; --purple-700: #3c2070; --purple-600: #553093;
+    --purple-200: #d9cdef; --purple-100: #ece6f7; --purple-50: #f6f3fb;
+    --ink: #1c1529; --ink-2: #4a4258; --muted: #6c6479; --line: #e2dcec; --line-strong: #cfc6de; --page: #f4f1f8;
+    --green: #1f6b45; --green-bg: #e3f2ea; --amber: #8a5300; --amber-bg: #fbf0dc;
+    --boss: #3c2070; --inventory: #116466; --accounting: #1f6b45; --facilities: #8a5300; --customer_service: #8c2a55;
+    font-family: var(--serif); font-size: 17px; line-height: 1.45; color: var(--ink); background: var(--page);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  h1, h2, h3, h4 { margin: 0; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .masthead { background: linear-gradient(120deg, var(--purple-950), var(--purple-800) 60%, var(--purple-700)); color: #fff; border-bottom: 3px solid var(--purple-600); }
+  .masthead-inner { max-width: 1280px; margin: 0 auto; padding: 18px 28px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark { width: 48px; height: 48px; display: grid; place-items: center; border: 1.5px solid rgba(255,255,255,.7); border-radius: 8px; font-size: 1.25rem; font-weight: 700; }
+  .brand-name { font-size: 1.55rem; font-weight: 700; line-height: 1.1; }
+  .brand-sub { font-size: .85rem; letter-spacing: .22em; text-transform: uppercase; color: var(--purple-200); }
+  .facts { display: flex; gap: 28px; margin: 0; }
+  .facts dt { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--purple-200); }
+  .facts dd { margin: 2px 0 0; font-size: 1.05rem; }
+  .balance-card { margin-left: auto; background: #fff; color: var(--ink); border-radius: 10px; padding: 10px 20px 12px; min-width: 250px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+  .balance-label { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .balance-amount { font-size: 2rem; font-weight: 700; color: var(--purple-800); line-height: 1.1; }
+  .balance-meta { font-size: .85rem; color: var(--muted); }
+  main { max-width: 1280px; margin: 0 auto; padding: 22px 28px 60px; display: flex; flex-direction: column; gap: 22px; }
+  .snapshot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center; }
+  .snapshot nav { display: flex; gap: 8px; flex-wrap: wrap; }
+  .snapshot nav a { color: var(--purple-800); border: 1px solid var(--purple-200); background: #fff; border-radius: 999px; padding: 4px 14px; text-decoration: none; }
+  .snapshot nav a:hover { background: var(--purple-50); }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 1px 2px rgba(31,16,53,.06), 0 4px 14px rgba(31,16,53,.05); padding: 18px 20px; }
+  .panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .ph { font-size: 1.15rem; font-variant: small-caps; letter-spacing: .04em; color: var(--purple-800); }
+  .panel h3:not(.ph) { font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+  .ticket-block { display: flex; flex-direction: column; gap: 18px; padding-top: 10px; border-top: 2px solid var(--purple-200); scroll-margin-top: 10px; }
+  .ticket-panel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .eyebrow { font-size: .78rem; letter-spacing: .16em; text-transform: uppercase; color: var(--purple-600); }
+  .ticket-panel h2 { font-size: 1.85rem; color: var(--purple-900); }
+  .ticket-request { font-size: 1.15rem; font-style: italic; color: var(--ink-2); margin: 14px 0; padding-left: 14px; border-left: 3px solid var(--purple-200); }
+  .fact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px 18px; margin: 0; }
+  .fact-grid dt { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .fact-grid dd { margin: 1px 0 0; font-weight: 700; }
+  .updates { margin: 0; padding-left: 18px; color: var(--ink-2); font-size: .95rem; }
+  .updates li { margin: 3px 0; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+  .pill-resolved { background: var(--green-bg); color: var(--green); }
+  .block-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: 18px; }
+  @media (max-width: 1000px) { .block-grid { grid-template-columns: 1fr; } .balance-card { margin-left: 0; } }
+  .agent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .agent-card { --accent: var(--boss); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .agent-card.not-needed { background: #fcfbfe; opacity: .75; }
+  .agent-boss { --accent: var(--boss); } .agent-inventory { --accent: var(--inventory); } .agent-accounting { --accent: var(--accounting); }
+  .agent-facilities { --accent: var(--facilities); } .agent-customer_service { --accent: var(--customer_service); }
+  .agent-card-head { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+  .agent-avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; font-weight: 700; font-size: .82rem; }
+  .agent-card h4 { font-size: 1.02rem; }
+  .agent-state { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--green); }
+  .not-needed .agent-state { color: var(--muted); }
+  .agent-summary { font-size: .88rem; color: var(--ink-2); font-weight: 700; }
+  .agent-saying { font-size: .92rem; background: var(--purple-50); border-left: 3px solid var(--accent); padding: 7px 10px; border-radius: 0 6px 6px 0; }
+  .quote-label { display: block; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .tool-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+  .chip { font-family: Menlo, Consolas, monospace; font-size: .72rem; padding: 2px 7px; border-radius: 4px; background: var(--purple-50); border: 1px solid var(--line); color: var(--ink-2); }
+  .chip-count { margin-left: 4px; color: var(--muted); }
+  .approval-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .approval { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .approval-top { display: flex; justify-content: space-between; align-items: baseline; }
+  .approval-kind { font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .approval-amount { font-size: 1.45rem; font-weight: 700; color: var(--purple-900); }
+  .approval-payee { font-size: 1.08rem; font-weight: 700; }
+  .approval-meta { font-size: .88rem; color: var(--ink-2); margin: 4px 0; }
+  .approval-after { font-size: .88rem; padding: 5px 8px; border-radius: 5px; background: var(--green-bg); color: var(--green); font-weight: 700; }
+  .draft { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; background: #fffdf8; }
+  .draft-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 8px; }
+  .draft-badge { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); border: 1px solid #efd9b3; background: var(--amber-bg); padding: 1px 7px; border-radius: 4px; }
+  .draft-body { white-space: pre-wrap; font-size: .98rem; }
+  .empty { color: var(--muted); font-style: italic; }
+  .decision-text { font-size: 1.12rem; }
+  .decision-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .decision-cols p { color: var(--ink-2); font-size: .95rem; }
+  @media (max-width: 760px) { .decision-cols { grid-template-columns: 1fr; } }
+  footer { color: var(--muted); font-size: .88rem; }
+  footer ul { margin: 6px 0 0; padding-left: 18px; }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><div class="brand-mark">CC</div><div><div class="brand-name">Campus Customs</div><div class="brand-sub">Operations Desk · Resolved</div></div></div>
+    <dl class="facts">
+      <div><dt>Shop date</dt><dd>Aug 31, 2026</dd></div>
+      <div><dt>Resolved</dt><dd>2 of 3 tickets</dd></div>
+      <div><dt>Agent team</dt><dd>gpt-6-luna</dd></div>
+    </dl>
+    <div class="balance-card">
+      <div class="balance-label">Checking balance</div>
+      <div class="balance-amount">$160.00</div>
+      <div class="balance-meta">Started at $3,400.00 · paid $3,240.00</div>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="snapshot">
+    <p class="muted">A saved snapshot of the React board for each resolved ticket, taken from the backend after the run.</p>
+    <nav aria-label="Resolved tickets"><a href="#ticket-101">#101 Bulldog tee</a><a href="#ticket-102">#102 Rent due</a></nav>
+  </div>
+  
+  <section class="ticket-block" id="ticket-101">
+    <div class="panel ticket-panel">
+      <div class="ticket-panel-head">
+        <div>
+          <div class="eyebrow">Ticket #101 · Customer order</div>
+          <h2>Bulldog tee</h2>
+          <div class="muted">From Tauhid Zaman</div>
+        </div>
+        <span class="pill pill-resolved">Resolved</span>
+      </div>
+      <p class="ticket-request">“Needs a tee in size S.”</p>
+      <dl class="fact-grid"><div><dt>SKU</dt><dd>CC-TEE-WHITE</dd></div><div><dt>Size</dt><dd>S</dd></div><div><dt>Quantity</dt><dd>1</dd></div><div><dt>Invoice</dt><dd>#501</dd></div></dl>
+      <h3>Updates on the ticket</h3>
+      <ul class="updates"><li>[2026-08-31 boss: waiting_on_approval] No CC-TEE-WHITE size S stock is on hand; invoice 501 ($840, overdue) must be approved to unblock the existing rush reprint. Payment request 1 is pending human approval; customer draft saved with conditional, non-guaranteed timing, and shipment/fulfillment remain unconfirmed.</li><li>[2026-08-31 Tyson Zhang: resolved] Marked resolved by Tyson Zhang. Invoice 501 paid (request 1); Bulldog Print Co can ship the size S reprint. Customer draft saved.</li></ul>
+    </div>
+
+    <div class="block-grid">
+      <div class="panel">
+        <div class="panel-head"><h3 class="ph">Agent team</h3><span class="muted">Run df317997af6c · 70 events</span></div>
+        <div class="agent-grid">
+        <article class="agent-card agent-boss ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">B</span>
+            <h4>Boss</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">8 tool calls · asked Inventory, Accounting, Customer Service · updated the ticket</div>
+          <p class="agent-saying"><span class="quote-label">Decision</span>Approve payment request 1 for the overdue $840 invoice 501 to Bulldog Print Co so the vendor can ship the already-linked rush reprint for CC-TEE-WHITE size S. Do not place a duplicate order; there is no size S stock on hand, and fulfillment remains dependent on payment approval and shipment. The customer draft is saved and gives September 5 only as a conditional estimate, not a guarantee.</p>
+          <ul class="tool-chips"><li class="chip">get_ticket</li><li class="chip">get_shop_date</li><li class="chip">get_cash_balance<span class=chip-count>×2</span></li><li class="chip">list_payment_requests<span class=chip-count>×2</span></li><li class="chip">list_customer_drafts</li><li class="chip">update_ticket</li></ul>
+        </article>
+        <article class="agent-card agent-inventory ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">I</span>
+            <h4>Inventory</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">5 tool calls</div>
+          <p class="agent-saying"><span class="quote-label">Reported</span>CC-TEE-WHITE size S has 0 on hand for 1 requested, so the shortfall is 1 (1 − 0). Bulldog Print Co supplies apparel reprints; its 5-day lead time from shop date 2026-08-31 gives an expected arrival of 2026-09-05 if ordered today, but it cannot ship while invoice 501 is open. Invoice 501 is for a rush reprint of this exact SKU and size, so paying that invoice is the dependency to get the stock moving; do not place a duplicate order for the same units.</p>
+          <ul class="tool-chips"><li class="chip">check_stock</li><li class="chip">get_shop_date</li><li class="chip">list_vendors</li><li class="chip">list_invoices</li><li class="chip">get_pricing</li></ul>
+        </article>
+        <article class="agent-card agent-accounting ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">A</span>
+            <h4>Accounting</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">11 tool calls · 2 reports · queued a payment for approval</div>
+          <p class="agent-saying"><span class="quote-label">Reported</span>Queued a human-approval request (ID 1) for the $840 open invoice 501 to Bulldog Print Co, which is 3 days overdue as of 2026-08-31. The request is pending; no cash has moved. The checking balance is $3,400, with $2,560 remaining if approved.</p>
+          <ul class="tool-chips"><li class="chip">get_shop_date<span class=chip-count>×2</span></li><li class="chip">list_invoices<span class=chip-count>×2</span></li><li class="chip">get_cash_balance<span class=chip-count>×2</span></li><li class="chip">list_payment_requests<span class=chip-count>×2</span></li><li class="chip">list_vendors</li><li class="chip">get_ticket</li><li class="chip">request_payment</li></ul>
+        </article>
+        <article class="agent-card agent-facilities not-needed">
+          <header class="agent-card-head">
+            <span class="agent-avatar">F</span>
+            <h4>Facilities</h4>
+            <span class="agent-state">Not needed</span>
+          </header>
+          <div class="agent-summary">Not needed on this ticket.</div>
+          
+          
+        </article>
+        <article class="agent-card agent-customer_service ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">CS</span>
+            <h4>Customer Service</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">2 tool calls · saved a draft</div>
+          <p class="agent-saying"><span class="quote-label">Reported</span>Saved a draft telling Tauhid that the Bulldog tee in size S is unavailable and that a reprint depends on payment approval and vendor shipment. It gives September 5 only as a conditional estimate, not a guaranteed arrival date; nothing was sent.</p>
+          <ul class="tool-chips"><li class="chip">get_ticket</li><li class="chip">save_customer_draft</li></ul>
+        </article></div>
+      </div>
+      <div class="side">
+        <div class="panel">
+          <div class="panel-head"><h3 class="ph">Payments</h3><span class="muted">1 approved</span></div>
+          <ul class="approval-list">
+        <li class="approval paid">
+          <div class="approval-top"><span class="approval-kind">invoice · request #1</span><span class="approval-amount">$840.00</span></div>
+          <div class="approval-payee">Bulldog Print Co</div>
+          <div class="approval-meta">Ticket 101: queue approval for overdue invoice 501 to unblock the existing rush reprint of CC-TEE-WHITE size S.</div>
+          <div class="approval-after">Paid · approved by Tyson Zhang</div>
+        </li></ul>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 class="ph">Customer draft</h3></div>
+          <article class="draft"><div class="draft-head">To <b>Tauhid Zaman</b><span class="draft-badge">Draft · never sent</span></div><div class="draft-body">Hi Tauhid,
+
+The Bulldog tee in size S is not currently available. A reprint is needed, and it depends on payment approval before the vendor can ship. If approval is received and the reprint is ordered today, the five-day lead time suggests an estimated arrival of September 5. This is only an estimate, not a guarantee; we’ll confirm timing once shipment is arranged.
+
+Campus Customs</div></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3 class="ph">Boss's decision</h3><span class="muted">recommended: Waiting on approval · then resolved by a person</span></div>
+      <p class="decision-text">Approve payment request 1 for the overdue $840 invoice 501 to Bulldog Print Co so the vendor can ship the already-linked rush reprint for CC-TEE-WHITE size S. Do not place a duplicate order; there is no size S stock on hand, and fulfillment remains dependent on payment approval and shipment. The customer draft is saved and gives September 5 only as a conditional estimate, not a guarantee.</p>
+      <div class="decision-cols"><div><h3>Why</h3><p>Inventory verified 0 units of CC-TEE-WHITE size S on hand for the 1-unit request. Invoice 501 is open for $840, was due 2026-08-28 and is 3 days overdue as of shop date 2026-08-31; Bulldog Print Co cannot ship while it remains open. Its 5-day lead time gives 2026-09-05 if ordered today, but payment approval and shipment are not confirmed. Accounting queued payment request 1, currently pending. Checking has $3,400 and no other pending requests, so the proposed payment fits; no cash has moved.</p></div><div><h3>Cash at the time</h3><p>Checking balance is $3,400 with no other pending requests. The queued $840 payment would leave $2,560 ($3,400 − $840) if approved; it is pending human approval and has not reduced the balance.</p></div></div>
+    </div>
+  </section>
+  <section class="ticket-block" id="ticket-102">
+    <div class="panel ticket-panel">
+      <div class="ticket-panel-head">
+        <div>
+          <div class="eyebrow">Ticket #102 · Rent notice</div>
+          <h2>Rent due</h2>
+          <div class="muted">From Elm City Properties</div>
+        </div>
+        <span class="pill pill-resolved">Resolved</span>
+      </div>
+      <p class="ticket-request">“Email: shop rent due in 2 days.”</p>
+      <dl class="fact-grid"><div><dt>Lease</dt><dd>#1</dd></div></dl>
+      <h3>Updates on the ticket</h3>
+      <ul class="updates"><li>[2026-08-31 boss: waiting_on_approval] Lease 1 rent is $2,400 due 2026-09-02 (in 2 days); payment request 2 to Elm City Properties is pending human approval, not paid. Pending requests total $3,240 against $3,400 cash, leaving $160 if both are approved.</li><li>[2026-08-31 Tyson Zhang: resolved] Marked resolved by Tyson Zhang. Rent paid (request 2); lease 1 next due moved to 2026-10-02.</li></ul>
+    </div>
+
+    <div class="block-grid">
+      <div class="panel">
+        <div class="panel-head"><h3 class="ph">Agent team</h3><span class="muted">Run 8f8c3a8ee5af · 64 events</span></div>
+        <div class="agent-grid">
+        <article class="agent-card agent-boss ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">B</span>
+            <h4>Boss</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">7 tool calls · asked Facilities, Accounting · updated the ticket</div>
+          <p class="agent-saying"><span class="quote-label">Decision</span>Proceed with the $2,400 lease 1 rent payment to Elm City Properties, subject to human approval. Payment request 2 is already pending, so do not create a duplicate; the rent is due 2026-09-02 and has not been paid.</p>
+          <ul class="tool-chips"><li class="chip">get_ticket</li><li class="chip">get_shop_date</li><li class="chip">get_cash_balance</li><li class="chip">list_payment_requests<span class=chip-count>×2</span></li><li class="chip">get_lease_status</li><li class="chip">update_ticket</li></ul>
+        </article>
+        <article class="agent-card agent-inventory not-needed">
+          <header class="agent-card-head">
+            <span class="agent-avatar">I</span>
+            <h4>Inventory</h4>
+            <span class="agent-state">Not needed</span>
+          </header>
+          <div class="agent-summary">Not needed on this ticket.</div>
+          
+          
+        </article>
+        <article class="agent-card agent-accounting ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">A</span>
+            <h4>Accounting</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">14 tool calls · 3 reports · queued a payment for approval</div>
+          <p class="agent-saying"><span class="quote-label">Reported</span>The live payment-request tool shows rent request 2 for lease 1 is already pending, contrary to the earlier snapshot, so I did not queue a duplicate. The pending total is $3,240 ($840 invoice 501 + $2,400 rent), leaving $160 from the $3,400 checking balance; rent is due in 2 days and is not paid.</p>
+          <ul class="tool-chips"><li class="chip">get_shop_date<span class=chip-count>×3</span></li><li class="chip">get_cash_balance<span class=chip-count>×3</span></li><li class="chip">list_payment_requests<span class=chip-count>×3</span></li><li class="chip">get_lease_status<span class=chip-count>×3</span></li><li class="chip">request_payment</li><li class="chip">get_ticket</li></ul>
+        </article>
+        <article class="agent-card agent-facilities ">
+          <header class="agent-card-head">
+            <span class="agent-avatar">F</span>
+            <h4>Facilities</h4>
+            <span class="agent-state">Done</span>
+          </header>
+          <div class="agent-summary">2 tool calls · asked Accounting</div>
+          <p class="agent-saying"><span class="quote-label">Reported</span>Ticket 102’s lease 1 rent is $2,400.00, due 2026-09-02. With the shop date 2026-08-31, it is due in 2 days and is urgent for the next approval batch. Accounting reports rent request 2 is pending human approval; it has not been paid.</p>
+          <ul class="tool-chips"><li class="chip">get_lease_status</li><li class="chip">list_payment_requests</li></ul>
+        </article>
+        <article class="agent-card agent-customer_service not-needed">
+          <header class="agent-card-head">
+            <span class="agent-avatar">CS</span>
+            <h4>Customer Service</h4>
+            <span class="agent-state">Not needed</span>
+          </header>
+          <div class="agent-summary">Not needed on this ticket.</div>
+          
+          
+        </article></div>
+      </div>
+      <div class="side">
+        <div class="panel">
+          <div class="panel-head"><h3 class="ph">Payments</h3><span class="muted">1 approved</span></div>
+          <ul class="approval-list">
+        <li class="approval paid">
+          <div class="approval-top"><span class="approval-kind">rent · request #2</span><span class="approval-amount">$2,400.00</span></div>
+          <div class="approval-payee">Elm City Properties</div>
+          <div class="approval-meta">Ticket 102: rent for lease 1 is due 2026-09-02; queue for human approval while preserving coverage for existing pending payment requests.</div>
+          <div class="approval-after">Paid · approved by Tyson Zhang</div>
+        </li></ul>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3 class="ph">Customer draft</h3></div>
+          <p class="empty">No customer draft: this ticket has no customer to reply to.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h3 class="ph">Boss's decision</h3><span class="muted">recommended: Waiting on approval · then resolved by a person</span></div>
+      <p class="decision-text">Proceed with the $2,400 lease 1 rent payment to Elm City Properties, subject to human approval. Payment request 2 is already pending, so do not create a duplicate; the rent is due 2026-09-02 and has not been paid.</p>
+      <div class="decision-cols"><div><h3>Why</h3><p>Facilities verified monthly rent of $2,400, due 2026-09-02, two days after the shop date 2026-08-31. The live payment-request list shows request 2 for this rent pending human approval, alongside request 1 for $840; against the verified $3,400 checking balance, both pending requests total $3,240 and leave $160 if approved. The rent is affordable but cannot be marked resolved until approval/payment is completed.</p></div><div><h3>Cash at the time</h3><p>Checking has $3,400. Pending requests are $840 for invoice 501 and $2,400 for rent (request 2), totaling $3,240; if both are approved, $160 remains. No cash has moved because both requests remain pending.</p></div></div>
+    </div>
+  </section>
+  <footer>
+    <p>Still on the board:</p>
+    <ul><li><b>#103 Bulk hoodie discount</b>: Needs info. Not resolved, so not shown on this board.</li></ul>
+    <p style="margin-top:8px">Source: backend API on the MCP server over <code>data/campus_customs_new.db</code>, and run logs in <code>output/team_runs/</code>. Checking balance matches <code>cash_accounts</code>.</p>
+  </footer>
+</main>
+</body>
+</html>

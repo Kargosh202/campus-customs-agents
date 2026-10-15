@@ -1,0 +1,22 @@
+# Secrets: never commit real keys
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+
+# Course data pack (unzip data.zip into data/ instead)
+data/*.db
+data/last_reset.txt
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

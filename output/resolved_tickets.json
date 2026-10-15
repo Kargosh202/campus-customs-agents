@@ -1,0 +1,56 @@
+{
+  "shop_date": "2026-08-31",
+  "source": "Backend API (MCP server on data/campus_customs_new.db)",
+  "starting_checking_balance": 3400.0,
+  "ending_checking_balance": 160.0,
+  "tickets": [
+    {
+      "id": 101,
+      "subject": "Bulldog tee",
+      "requester": "Tauhid Zaman",
+      "final_status": "resolved",
+      "resolved": true,
+      "outcome": "Size S tee was out of stock (0 on hand). The team found that overdue invoice 501 ($840, Bulldog Print Co) was the rush reprint of this exact tee and was blocking the vendor, so it queued that payment instead of a duplicate order and saved a draft to Tauhid with a conditional 9/5 estimate. Tyson Zhang approved the payment; invoice 501 is paid and the vendor can ship.",
+      "payments": [
+        {
+          "request_id": 1,
+          "kind": "invoice",
+          "payee": "Bulldog Print Co",
+          "amount": 840.0,
+          "status": "paid",
+          "approved_by": "Tyson Zhang"
+        }
+      ],
+      "customer_drafts": 1
+    },
+    {
+      "id": 102,
+      "subject": "Rent due",
+      "requester": "Elm City Properties",
+      "final_status": "resolved",
+      "resolved": true,
+      "outcome": "Lease 1 rent of $2,400 to Elm City Properties was due 9/2 (2 days out). Facilities verified it, Accounting queued one payment request (a second ask didn't duplicate it), and Tyson Zhang approved it. Rent is paid and the lease's next due date moved to 2026-10-02.",
+      "payments": [
+        {
+          "request_id": 2,
+          "kind": "rent",
+          "payee": "Elm City Properties",
+          "amount": 2400.0,
+          "status": "paid",
+          "approved_by": "Tyson Zhang"
+        }
+      ],
+      "customer_drafts": 0
+    },
+    {
+      "id": 103,
+      "subject": "Bulk hoodie discount",
+      "requester": "Yale AI Club",
+      "final_status": "needs_info",
+      "resolved": false,
+      "outcome": "Only 8 of 20 size M hoodies are in stock. The team offered the 8 at 10% off ($52.20 each, 57.9% margin) and promised nothing on the other 12: the $264 restock didn't fit in the $160 left after rent and invoice 501. A draft to the Yale AI Club is saved; the ticket waits on the club's answer. Its run was stopped on request before the Boss's final plan, and it is not resolved.",
+      "payments": [],
+      "customer_drafts": 1
+    }
+  ]
+}
